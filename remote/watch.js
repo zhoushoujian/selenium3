@@ -2,9 +2,9 @@
  * @Author: zhoushoujian 
  * @Date: 2018-06-05 15:18:11 
  * @Last Modified by: zhoushoujian
- * @Last Modified time: 2018-08-12 22:21:31
+ * @Last Modified time: 2018-08-12 16:16:13
  */
-require('colors');
+require('colors')
 const chokidar = require('chokidar');
 const path = require('path');
 const {
