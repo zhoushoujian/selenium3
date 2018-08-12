@@ -1,0 +1,20 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "based wd.js",
+  "author": "zhoushoujian",
+  "keyword": "wd",
+  "main": "",
+  "dependencies": {
+    "chai-as-promised": "^7.1.1",
+    "chokidar": "^2.0.4",
+    "mocha": "^3.5.3",
+    "mochawesome": "^2.3.1",
+    "wd": "^1.4.1"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "colors": "^1.1.2",
+    "robotjs": "^0.4.7"
+  }
+}
