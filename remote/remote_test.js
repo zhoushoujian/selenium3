@@ -7,7 +7,7 @@ describe("launch chrome",function(){
             return chrome.init({
                 browserName: 'chrome'
               }).then(() => chrome.doOpenIndex()
-              .then(() => chrome.title().should.become("快捷网址导航-dh.zhoushoujian.com"))
+              .then(() => chrome.title().should.become("快捷网址导航-www.2126057.cn"))
             .then(() => chrome.quit()))
 
         })/* .then(() => chrome.init({

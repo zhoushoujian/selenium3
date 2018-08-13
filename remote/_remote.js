@@ -1,10 +1,10 @@
 require("../basic/chrome");
-var crypt = require("./crypt")
+var crypt = require("./crypt");
 module.exports = {
     exec(req,res){
         if(req.method != "POST"){
-            res.writeHead(403,{})
-            res.end("请使用post方式发送")
+            res.writeHead(403,{});
+            res.end("请使用post方式发送");
         }
         var chunks = [];
         var size = 0;

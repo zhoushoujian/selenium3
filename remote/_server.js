@@ -10,9 +10,9 @@ if(cluster.isMaster){
         const worker = cluster.fork();
         worker.on('exit',(code,signal) => {
             if(signal){
-                console.log('worker was killed by signl',signal);
+                console.warn('worker was killed by signl',signal);
             } else if (code !==0 ){
-                console.log("worker exited with error",code);
+                console.warn("worker exited with error",code);
             } else {
                 console.log("worker success!");
             }
@@ -24,18 +24,17 @@ if(cluster.isMaster){
 var handle = module.exports = {
     "/local/ip":function(){  
         var os = require("os")
-        var address
+        var address;
         var networks = os.networkInterfaces()
-        //console.log(networks)
         Object.keys(networks).forEach(function(k){
              for( var kk in networks[k] ){
                    if(networks[k][kk].family === "IPv4" && networks[k][kk].address !== "127.0.0.1"){
-                       address = networks[k][kk].address
-                        return address
+                       address = networks[k][kk].address;
+                        return address;
                    }
              }
         })
-        return address
+        return address;
     }
 };
 
@@ -43,22 +42,19 @@ var handle = module.exports = {
 {
     var remote = require("./_remote")
     for (let k in remote) {
-        handle["/remote/" + k] = remote[k]   //remote[k]是_remote里面具体的函数
-        //console.log(`加载远程过程调用 + ${k}`)
+        handle["/remote/" + k] = remote[k];
     }
 }
 
 var server = http.createServer((req,res) => {
-    var url = req.url
+    var url = req.url;
     if(handle[url]){
         if(url.slice(1,7).toLowerCase() === "remote"){
-            console.log(url + 1)
-            return handle[url](req,res)
+            return handle[url](req,res);
         }
     }
     res.setHeader('Content-Type','text/javascript;charset=UTF-8');
-    var filename = url.pathname.substring(1);
-    var type;
+    var filename = url.pathname.substring(1),type;
     switch (filename.substring(filename.lastIndexOf('.')+1)){
         case'html':
         case 'htm':
@@ -76,8 +72,8 @@ var server = http.createServer((req,res) => {
     }
     res.end(function(){
         return fs.readFileSync(url);
-    })
-})
+    });
+});
 server.listen({
     port:8080,
     exclusive:true
@@ -87,7 +83,7 @@ server.on("listening",function(){
     process.title = `welink Test Server (http://${handle["/local/ip"]()}:8080)`;
 })
 server.on("error",function(error){
-    console.log(`服务端口8080正在使用中 : ${error}`)
+    console.warn(`服务端口8080正在使用中 : ${error}`)
 })
 
 process.on('SIGERM', function(code) {
