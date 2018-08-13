@@ -31,17 +31,17 @@ module.exports = function (i, f, params, ...args) {
             res.on("end", function () {
                 let data;
                 if (res.statusCode !== 200) {
-                    data = String(crypt.decrypt(Buffer.concat(chunks), "你看得到我打在屏幕上的字，却看不到我落在键盘上的泪。"));
+                    data = String(crypt.decrypt(Buffer.concat(chunks), "A error happened"));
                     console.warn(func);
                     return reject("oh error " + res.statusCode + ":" + data);
                 }
-                data = String(crypt.decrypt(Buffer.concat(chunks), "请你不要再迷恋我，我只是一个传说"));
+                data = String(crypt.decrypt(Buffer.concat(chunks), "one more kiss that is no crazy"));
                 return resolve.apply(null, JSON.parse(data));
             });
         });
         req.on("error", reject);
         var func = "return " + f.toString() + `.apply(this,${params})`;
-        req.write(crypt.encrypt(func, "多少风沙，多少汗水。多少辛酸，带走我的泪。"));
+        req.write(crypt.encrypt(func, "it\'s raining outside and I do miss you"));
         req.end();
     });
 };
