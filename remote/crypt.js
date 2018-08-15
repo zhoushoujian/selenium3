@@ -21,7 +21,6 @@ crypt.encrypt = function(data,sign){
     timevalid <<= 1;   //右移符号，相当于x2
     let remainder = (time % timevalid).toString(24);  //固定的0-4位字符，最大值为‘8g80’
     let consult = parseInt(time / timevalid).toString(24);  //固定的6位字符,如1ecm31
-    consult = consult << 1;
     sign = Buffer.concat([Buffer.from(consult),Buffer.from(sign)]);   //每两分钟变化一次   
     let time_signed = encode(consult,sign);  //字符长度为商的长度，也就是6
     //console.log("余",余,"商",商,"time_signed",time_signed)
@@ -36,14 +35,13 @@ crypt.decrypt = function(buff,sign){
     let time_start = size + 1;  //这个数字是time_signed的起始位置
     let remainder = String(buff.slice(1,time_start));  //截取出加密前的余数
     let consult = parseInt((time - parseInt(remainder,24)) / timevalid).toString(24);  //得出加密前的商
-    consult = consult >> 1;
     let data_start = time_start + consult.length;  //在余数的长度基础上加上商的长度就等于数据的起始位置
     let time_signed = buff.slice(time_start,data_start);  //截取出加密前的time_signed
     //原来的商加相等的sign，得到的sign和加密前的相同
     sign = Buffer.concat([Buffer.from(consult),Buffer.from(sign)]);
     if(Buffer.compare(encode(consult,sign),time_signed)){
         //如果加密前后的数据不相同，就抛出错误
-        console.warn("timeout");
+        console.warn("timeout!");
         return;
     }
     //加密前的数据和相同的sign，完美实现解密
