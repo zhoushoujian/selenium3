@@ -1,9 +1,9 @@
 require('../function/console');
 var http = require("http");
 var fs = require("fs");
-var path = require("path");
 var cluster = require("cluster");
-if (cluster.isMaster) {
+var IS_RUNNING_AS_SERVER = process.mainModule.IS_RUNNING_AS_SERVER = require.main === module;
+if (IS_RUNNING_AS_SERVER && cluster.isMaster) {
     return function () {
         let work = function () {
             if (work.inf) return;
