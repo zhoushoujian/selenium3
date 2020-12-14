@@ -6,7 +6,7 @@
     "keyword": "wd",
     "main": "mocha scripts/simple",
     "scripts": {
-        "start": "npx mocha scripts/simple",
+        "start": "npx mocha scripts/simple --reporter mochawesome",
         "eslint": "eslint -c .eslintrc.js \"**/*.js\"",
         "unit:test": "npx mocha remote/crypt_test.js",
         "chrome:test": "npx mocha basic/chrome_test.js"
