@@ -1,16 +1,17 @@
 require("../basic/chrome")
-describe("launch chrome",function(){
+
+describe("launch chrome", function () {
     this.timeout(20000)
-    before(function(){
+    before(function () {
         return chrome.init({
             browserName: 'chrome'
-          })
+        })
     })
-    after(function(){
+    after(function () {
         return chrome.quit()
     })
-    it("open index",function(){
+    it("open index", function () {
         return chrome.doOpenIndex()
-        .then(() => chrome.title().should.become("快捷网址导航-dh.zhoushoujian.com"))
+            .then(() => chrome.title().should.become("周守俭的旅游相册空间"))
     })
-})
+});

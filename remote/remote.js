@@ -1,8 +1,11 @@
+/* eslint-disable camelcase */
 require("../basic/chrome");
-var crypt = require("./crypt");
-var http = require("http");
-var remote_ip = ["192.168.1.108"];
-var remote_port = 8080;
+const http = require("http");
+const crypt = require("./crypt");
+
+const remote_ip = ["192.168.1.108"];
+const remote_port = 8080;
+
 module.exports = function (i, f, params, ...args) {
     if (!(params instanceof Array) || args.length) {
         arguments.length > 1 && args.unshift(params);
@@ -10,21 +13,23 @@ module.exports = function (i, f, params, ...args) {
         args = params;
     }
     params = JSON.stringify(args, function (p, o) {
-        for (var k in o) {
-            var v = o[k]
-            o[k] = v instanceof Function ? v() : v;
+        for (const k in o) {
+            if (Object.prototype.hasOwnProperty.call(o, k)) {
+                const v = o[k]
+                o[k] = v instanceof Function ? v() : v;
+            }
         }
         return o;
     }, 4);
-    var options = {
+    const options = {
         port: remote_port,
         hostname: remote_ip[i],
         method: 'POST',
         path: '/remote/exec'
     }
     return new Promise(function (resolve, reject) {
-        var req = http.request(options, function (res) {
-            var chunks = [];
+        const req = http.request(options, function (res) {
+            const chunks = [];
             res.on("data", function (data) {
                 chunks.push(data);
             });
@@ -33,14 +38,15 @@ module.exports = function (i, f, params, ...args) {
                 if (res.statusCode !== 200) {
                     data = String(crypt.decrypt(Buffer.concat(chunks), "A error happened"));
                     console.warn(func);
+                    // eslint-disable-next-line prefer-promise-reject-errors
                     return reject("oh error " + res.statusCode + ":" + data);
                 }
                 data = String(crypt.decrypt(Buffer.concat(chunks), "one more kiss that is no crazy"));
-                return resolve.apply(null, JSON.parse(data));
+                return resolve(JSON.parse(data));
             });
         });
         req.on("error", reject);
-        var func = "return " + f.toString() + `.apply(this,${params})`;
+        const func = "return " + f.toString() + `.apply(this,${params})`;
         req.write(crypt.encrypt(func, "it\'s raining outside and I do miss you"));
         req.end();
     });

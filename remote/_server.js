@@ -1,11 +1,14 @@
-require('../function/console');
-var http = require("http");
-var fs = require("fs");
-var cluster = require("cluster");
-var IS_RUNNING_AS_SERVER = process.mainModule.IS_RUNNING_AS_SERVER = require.main === module;
+const http = require("http");
+const fs = require("fs");
+const os = require("os")
+const cluster = require("cluster");
+const remote = require("./_remote")
+
+const IS_RUNNING_AS_SERVER = require.main === module;
+process.mainModule.IS_RUNNING_AS_SERVER = IS_RUNNING_AS_SERVER
 if (IS_RUNNING_AS_SERVER && cluster.isMaster) {
     return function () {
-        let work = function () {
+        const work = function () {
             if (work.inf) return;
             work.inf = true;
             const worker = cluster.fork();
@@ -22,55 +25,37 @@ if (IS_RUNNING_AS_SERVER && cluster.isMaster) {
         work();
     }();
 }
-var handle = module.exports = {
+const handle = {
     "/local/ip": function () {
-        var os = require("os")
-        var address;
-        var networks = os.networkInterfaces()
+        let address;
+        const networks = os.networkInterfaces()
         Object.keys(networks).forEach(function(k){
-             for( var kk in networks[k] ){
-                   if(networks[k][kk].family === "IPv4" && networks[k][kk].address !== "127.0.0.1"){
-                       address = networks[k][kk].address;
-                        return address;
-                   }
-             }
+            for( const kk in networks[k] ){
+                if(networks[k][kk].family === "IPv4" && networks[k][kk].address !== "127.0.0.1"){
+                    address = networks[k][kk].address;
+                    return address;
+                }
+            }
         })
         return address;
     }
 };
 
 //加载远程过程调用
-{
-    var remote = require("./_remote")
-    for (let k in remote) {
+for (const k in remote) {
+    if (Object.prototype.hasOwnProperty.call(remote, k)) {
         handle["/remote/" + k] = remote[k];
     }
 }
 
-var server = http.createServer((req,res) => {
-    var url = req.url;
+const server = http.createServer((req, res) => {
+    const url = req.url;
     if(handle[url]){
-        if(url.slice(1,7).toLowerCase() === "remote"){
-            return handle[url](req,res);
+        if(url.slice(1, 7).toLowerCase() === "remote"){
+            return handle[url](req, res);
         }
     }
-    res.setHeader('Content-Type','text/javascript;charset=UTF-8');
-    var filename = url.pathname.substring(1),type;
-    switch (filename.substring(filename.lastIndexOf('.')+1)){
-        case'html':
-        case 'htm':
-            type = 'text/html;charset=UTF-8'; break;
-        case 'js':
-            type = 'application/javascript;charset=UTF-8'; break;
-        case 'css':
-            type = 'text/css;charset=UTF-8'; break;
-        case 'txt':
-            type = 'text/plain;charset=UTF-8'; break;
-        case 'manifest':
-            type = 'text/cache-manifest;;charset=UTF-8'; break;
-        default:
-            type = 'application/octet-stream'; break;
-    }
+    res.setHeader('Content-Type', 'text/javascript;charset=UTF-8');
     res.end(function () {
         return fs.readFileSync(url);
     });
@@ -83,13 +68,15 @@ server.on("listening", function () {
     console.log('启动服务成功！')
     process.title = `welink Test Server (http://${handle["/local/ip"]()}:8080)`;
 });
-server.on("error",function(error){
+server.on("error", function(error){
     console.warn(`服务端口8080正在使用中 : ${error}`)
 });
 
-process.on('SIGERM', function (code) {
+process.on('SIGERM', function (_code) {
     console.log("本程序运行了", process.uptime());
     process.exit(0);
 });
 
 console.log("process.pid", process.pid)
+
+module.exports = handle;

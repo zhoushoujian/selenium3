@@ -19,4 +19,3 @@ def image_contrast(img1, img2):
 if __name__ == '__main__':
     result = image_contrast(sys.argv[1],sys.argv[2])
     print(result)
-   

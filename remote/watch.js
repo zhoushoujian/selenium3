@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /*
  * @Author: zhoushoujian 
  * @Date: 2018-06-05 15:18:11 
@@ -7,16 +8,16 @@
 require('colors')
 const chokidar = require('chokidar');
 const path = require('path');
-const {
-    exec
-} = require('child_process');
-let arrayList = [];
+const { exec } = require('child_process');
+
+const arrayList = [];
 let pid;
-const dst_path = path.join(__dirname, "../../");
+const dst_path = path.join(__dirname, "../");
 const server_file = path.join(__dirname, "./_server");
 
 //监听文件变化 
 const watcher = chokidar.watch(dst_path, {
+    // eslint-disable-next-line no-useless-escape
     ignored: /(^|[\/\\])\..|node_modules/,
     persistent: true
 });
@@ -28,7 +29,7 @@ watcher.on('ready', () => console.log('Initial scan complete. Ready for changes'
 
 //启动服务
 let main = function () {
-    let child = exec(`node ${server_file}`);
+    const child = exec(`node ${server_file}`);
     child.stdout.on('data', function (data) {
         arrayList.push(data);
         console.log("stdout", data);
@@ -48,7 +49,7 @@ setTimeout(function () {
         .on('error', error => console.log(`Watcher error: ${error}`.bold.red))
         .on('all', (event, path) => {
             pid = arrayList.join(" ").split("process.pid").slice(-1).toString().split("\n").slice(0, 1).join(" ").trim();
-            let kill = setInterval(() => {
+            const kill = setInterval(() => {
                 if (main instanceof Function) {
                     process.kill(pid);
                     main = null;
@@ -56,7 +57,7 @@ setTimeout(function () {
                 setTimeout(() => {
                     if (!main) {
                         main = function () {
-                            let child = exec(`node ${server_file}`);
+                            const child = exec(`node ${server_file}`);
                             child.stdout.on('data', function (data) {
                                 arrayList.push(data);
                                 console.log("stdout", data);
@@ -69,7 +70,7 @@ setTimeout(function () {
                             });
                         };
                         main();
-                        setTimeout(() => console.log("新一轮的服务器监听已经启动".green),4000);
+                        setTimeout(() => console.log("新一轮的服务器监听已经启动".green), 4000);
                     }
                 }, 5000); //处理完所有事件后再监听服务器  
                 clearInterval(kill);
@@ -83,7 +84,7 @@ main();
 
 //捕获异常
 process.on('uncaughtException', function (err) {
-    if (err == "Error: kill ESRCH") {
+    if (err === "Error: kill ESRCH") {
         console.log("子进程已退出");
     } else {
         console.log('Caught exception: ' + err);
